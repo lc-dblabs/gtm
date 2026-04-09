@@ -1,7 +1,7 @@
 {
-  "name": "gtm-slack-bot",
+  "name": "oracle-gtm",
   "version": "1.0.0",
-  "description": "Slack bot connected to GitHub for GTM activities",
+  "description": "Oracle (GTM) - Claude-powered Slack bot that executes skills from GitHub",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",

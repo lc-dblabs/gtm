@@ -35,7 +35,7 @@ const port = process.env.PORT || 3000;
   await app.start(port);
 
   const sources = getSkillSources();
-  console.log(`GTM Slack Bot running!`);
+  console.log(`Oracle (GTM) running!`);
   console.log(`GitHub repo: ${process.env.GITHUB_OWNER}/${process.env.GITHUB_REPO}`);
   console.log(`Skill sources: ${sources.map((s) => `${s.owner}/${s.repo}`).join(", ")}`);
   console.log(`Mode: ${process.env.SLACK_APP_TOKEN ? "Socket Mode" : `HTTP on port ${port}`}`);

@@ -258,7 +258,7 @@ export async function executeWithClaude(userMessage: string, options: ExecuteOpt
     ? `## Available Skills\n\nYou have access to the following skills/workflows from GitHub. When a user's request matches a skill, follow that skill's instructions:\n\n${skills.map((s) => `### ${s.name} (from ${s.source})\n${s.description}\n\n<skill_content>\n${s.content}\n</skill_content>`).join("\n\n---\n\n")}`
     : "";
 
-  const systemPrompt = `You are a GTM (Go-To-Market) assistant bot connected to GitHub. You help the team with their workflows and activities.
+  const systemPrompt = `You are Oracle, a GTM (Go-To-Market) assistant bot connected to GitHub. You help the team with their workflows and activities.
 
 You are connected to the GitHub repo: ${DEFAULT_OWNER}/${DEFAULT_REPO}
 

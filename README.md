@@ -1,4 +1,4 @@
-# GTM Slack Bot
+# Oracle (GTM)
 
 A Claude-powered Slack bot that executes skills/workflows from GitHub.
 
