@@ -82,9 +82,36 @@ async function findSkillsInRepo(owner: string, repo: string): Promise<Skill[]> {
   return skills;
 }
 
-export function getSkillSources(): SkillSource[] {
-  const raw = process.env.SKILL_SOURCES ?? "";
-  const sources: SkillSource[] = raw
+async function listOrgRepos(org: string): Promise<string[]> {
+  const repos: string[] = [];
+  let page = 1;
+  while (true) {
+    const { data } = await octokit.repos.listForOrg({ org, per_page: 100, page, type: "all" });
+    repos.push(...data.map((r) => r.name));
+    if (data.length < 100) break;
+    page++;
+  }
+  return repos;
+}
+
+export async function resolveSkillSources(): Promise<SkillSource[]> {
+  const sources: SkillSource[] = [];
+
+  // SKILL_ORGS — scan all repos in these orgs (e.g. "DearbornLabs")
+  const orgRaw = process.env.SKILL_ORGS ?? "";
+  const orgs = orgRaw.split(",").map((s) => s.trim()).filter(Boolean);
+  for (const org of orgs) {
+    try {
+      const repos = await listOrgRepos(org);
+      sources.push(...repos.map((repo) => ({ owner: org, repo })));
+    } catch (err) {
+      console.warn(`Could not list repos for org ${org}: ${err}`);
+    }
+  }
+
+  // SKILL_SOURCES — specific repos (e.g. "DearbornLabs/dl-shared-kb")
+  const repoRaw = process.env.SKILL_SOURCES ?? "";
+  const specificRepos = repoRaw
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean)
@@ -93,15 +120,38 @@ export function getSkillSources(): SkillSource[] {
       return { owner, repo };
     })
     .filter((s) => s.owner && s.repo);
+  for (const r of specificRepos) {
+    if (!sources.find((s) => s.owner === r.owner && s.repo === r.repo)) {
+      sources.push(r);
+    }
+  }
 
-  // Always include the configured default repo
-  const defaultOwner = process.env.GITHUB_OWNER || "DearbornLabs";
-  const defaultRepo = process.env.GITHUB_REPO || "dl-shared-kb";
-  if (!sources.find((s) => s.owner === defaultOwner && s.repo === defaultRepo)) {
+  // Always include the default repo if nothing else is configured
+  if (sources.length === 0) {
+    const defaultOwner = process.env.GITHUB_OWNER || "DearbornLabs";
+    const defaultRepo = process.env.GITHUB_REPO || "dl-shared-kb";
     sources.push({ owner: defaultOwner, repo: defaultRepo });
   }
 
   return sources;
+}
+
+// Keep sync version for display (before resolution)
+export function getSkillSources(): SkillSource[] {
+  const orgRaw = process.env.SKILL_ORGS ?? "";
+  const repoRaw = process.env.SKILL_SOURCES ?? "";
+  const label: SkillSource[] = [];
+
+  if (orgRaw) label.push(...orgRaw.split(",").map((o) => ({ owner: o.trim(), repo: "(all repos)" })));
+  if (repoRaw) {
+    repoRaw.split(",").map((s) => s.trim()).filter(Boolean).forEach((s) => {
+      const [owner, repo] = s.split("/");
+      if (owner && repo) label.push({ owner, repo });
+    });
+  }
+  if (label.length === 0) label.push({ owner: process.env.GITHUB_OWNER || "DearbornLabs", repo: process.env.GITHUB_REPO || "dl-shared-kb" });
+
+  return label;
 }
 
 export async function loadSkills(forceRefresh = false): Promise<Skill[]> {
@@ -109,7 +159,7 @@ export async function loadSkills(forceRefresh = false): Promise<Skill[]> {
     return skillCache;
   }
 
-  const sources = getSkillSources();
+  const sources = await resolveSkillSources();
   console.log(`Loading skills from: ${sources.map((s) => `${s.owner}/${s.repo}`).join(", ")}`);
 
   const allSkills: Skill[] = [];
