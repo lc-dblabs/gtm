@@ -92,8 +92,8 @@ npm run build && npm start  # Production
 | `ANTHROPIC_API_KEY` | Your Anthropic API key (sk-ant-...) |
 | `CLAUDE_MODEL` | Claude model (default: claude-opus-4-5) |
 | `GITHUB_TOKEN` | GitHub Personal Access Token |
-| `GITHUB_OWNER` | GitHub org/user (default: lc-dblabs) |
-| `GITHUB_REPO` | Repository name (default: gtm) |
+| `GITHUB_OWNER` | GitHub org/user (default: DearbornLabs) |
+| `GITHUB_REPO` | Repository name (default: dl-shared-kb) |
 | `SKILL_SOURCES` | Comma-separated repos to load skills from (default: DearbornLabs/dl-shared-kb) |
 
 ## Tokens

@@ -5,8 +5,8 @@ import type { Skill } from "./skills";
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 
-const DEFAULT_OWNER = process.env.GITHUB_OWNER || "lc-dblabs";
-const DEFAULT_REPO = process.env.GITHUB_REPO || "gtm";
+const DEFAULT_OWNER = process.env.GITHUB_OWNER || "DearbornLabs";
+const DEFAULT_REPO = process.env.GITHUB_REPO || "dl-shared-kb";
 const MODEL = process.env.CLAUDE_MODEL || "claude-opus-4-5";
 const MAX_TOKENS = 4096;
 

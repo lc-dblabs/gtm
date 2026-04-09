@@ -95,8 +95,8 @@ export function getSkillSources(): SkillSource[] {
     .filter((s) => s.owner && s.repo);
 
   // Always include the configured default repo
-  const defaultOwner = process.env.GITHUB_OWNER || "lc-dblabs";
-  const defaultRepo = process.env.GITHUB_REPO || "gtm";
+  const defaultOwner = process.env.GITHUB_OWNER || "DearbornLabs";
+  const defaultRepo = process.env.GITHUB_REPO || "dl-shared-kb";
   if (!sources.find((s) => s.owner === defaultOwner && s.repo === defaultRepo)) {
     sources.push({ owner: defaultOwner, repo: defaultRepo });
   }

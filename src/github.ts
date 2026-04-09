@@ -4,8 +4,8 @@ const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,
 });
 
-const owner = process.env.GITHUB_OWNER || "lc-dblabs";
-const repo = process.env.GITHUB_REPO || "gtm";
+const owner = process.env.GITHUB_OWNER || "DearbornLabs";
+const repo = process.env.GITHUB_REPO || "dl-shared-kb";
 
 export interface PullRequest {
   number: number;
