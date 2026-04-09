@@ -1,17 +1,24 @@
 # GTM Slack Bot
 
-A Slack bot connected to the GTM GitHub repository for team collaboration.
+A Claude-powered Slack bot that executes skills/workflows from GitHub.
 
 ## Features
 
-- View repository info, PRs, issues, branches, and commits
-- Create issues directly from Slack
-- Works via slash commands or @mentions
+- **AI-powered**: Claude reads and executes SKILL.md workflows from any GitHub repo
+- **GitHub integration**: Read files, manage issues/PRs, list commits/branches, write files
+- **Skill discovery**: Automatically loads SKILL.md files from `DearbornLabs/dl-shared-kb` and other configured repos
+- Works via @mentions, DMs, or slash commands
 
 ## Commands
 
 | Command | Description |
 |---------|-------------|
+| `/skills` | List all skills loaded from GitHub |
+| `/skills refresh` | Force-reload skills from GitHub |
+| `/skills <name>` | View a specific skill's content |
+| `/run <skill> — <task>` | Execute a specific skill |
+| `/run <task>` | Claude picks the right skill automatically |
+| `/ask <question>` | Ask Claude anything about the repo |
 | `/repo` | Repository info |
 | `/prs [open\|closed\|all]` | List pull requests |
 | `/pr <number>` | Get PR details |
@@ -20,7 +27,7 @@ A Slack bot connected to the GTM GitHub repository for team collaboration.
 | `/commits [branch]` | Recent commits |
 | `/newissue <title> \| <body>` | Create an issue |
 
-You can also @mention the bot: `@bot prs`, `@bot issue #123`, etc.
+**@mention the bot** with anything — Claude will use the loaded skills to help.
 
 ## Setup
 
@@ -47,6 +54,7 @@ Under **OAuth & Permissions**, add these Bot Token Scopes:
 ### 4. Create Slash Commands
 
 Under **Slash Commands**, create:
+- `/skills`, `/run`, `/ask`
 - `/repo`, `/prs`, `/pr`, `/issues`, `/branches`, `/commits`, `/newissue`
 
 ### 5. Subscribe to Events
@@ -81,12 +89,25 @@ npm run build && npm start  # Production
 | `SLACK_BOT_TOKEN` | Bot User OAuth Token (xoxb-...) |
 | `SLACK_SIGNING_SECRET` | Signing Secret from Basic Info |
 | `SLACK_APP_TOKEN` | App-Level Token for Socket Mode (xapp-...) |
+| `ANTHROPIC_API_KEY` | Your Anthropic API key (sk-ant-...) |
+| `CLAUDE_MODEL` | Claude model (default: claude-opus-4-5) |
 | `GITHUB_TOKEN` | GitHub Personal Access Token |
 | `GITHUB_OWNER` | GitHub org/user (default: lc-dblabs) |
 | `GITHUB_REPO` | Repository name (default: gtm) |
+| `SKILL_SOURCES` | Comma-separated repos to load skills from (default: DearbornLabs/dl-shared-kb) |
 
-## GitHub Token
+## Tokens
 
-Create a token at [github.com/settings/tokens](https://github.com/settings/tokens) with:
+**Anthropic**: Get your API key at [console.anthropic.com](https://console.anthropic.com)
+
+**GitHub**: Create a token at [github.com/settings/tokens](https://github.com/settings/tokens) with:
 - `repo` scope for private repos, or
 - `public_repo` for public repos only
+
+## How Skills Work
+
+The bot scans `SKILL_SOURCES` repos for `SKILL.md` files. Each skill has:
+- **Frontmatter** with `name` and `description`
+- **Content** with instructions Claude follows
+
+When you @mention the bot or use `/run`, Claude reads the skill instructions and executes them step-by-step using GitHub tools.
